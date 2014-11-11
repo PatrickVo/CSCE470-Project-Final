@@ -14,8 +14,8 @@ label.grid()
 '''
 
 #windowmode = 'write'
-windowmode = 'list'
-#windowmode = 'finish'
+#windowmode = 'list'
+windowmode = 'finish'
 
 def toreview():
         windowmode = 'write'      
@@ -60,7 +60,7 @@ if(windowmode == 'finish'):
         Textbox = "Sumbited Review"
         T.insert(END, Textbox)         
         b1 = Button(window, text="Write another review", command=callback)
-        b2 = Button(window, text="Chanage Restaurant", command=callback)
+        b2 = Button(window, text="Change Restaurant", command=callback)
         b1.pack()             
         b2.pack()
 
