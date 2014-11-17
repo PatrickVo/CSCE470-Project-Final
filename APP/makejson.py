@@ -1,5 +1,12 @@
 import json #or cjson
 from json import dumps, load
+import simplejson
+
+def put(data, filename):
+	jsondata = simplejson.dumps(data, indent=4, skipkeys=True, sort_keys=True)
+	fd = open(filename, 'w')
+	fd.write(jsondata)
+	fd.close()
 
 class Hw1(object):
     def __init__(self):
@@ -23,6 +30,11 @@ star3 = open('star3.json', 'w')
 star4 = open('star4.json', 'w')
 star5 = open('star5.json', 'w')
 
+dict1 = dict()
+dict2 = dict()
+dict3 = dict()
+dict4 = dict()
+dict5 = dict()
 
 #1125459
 while (line_num < 1000):
@@ -32,22 +44,19 @@ while (line_num < 1000):
     text = item['text']     
   
     if(rating == 5):
-        dumps({'text':text},star5,indent=4)   
-        '''    
+        dict5[line_num] = text           
     if(rating == 4):
-        rate4.append(text)
+        dict4[line_num] = text
     if(rating == 3):
-        rate3.append(text)
+        dict3[line_num] = text
     if(rating == 2):
-        rate2.append(text)
+        dict2[line_num] = text
     if(rating == 1):
-        rate1.append(text)
-        '''
+        dict1[line_num] = text
+       
 
-        
-star5.close
-star4.close
-star3.close
-star2.close
-star1.close
-
+json.dump(dict5,star5, indent=0) 
+json.dump(dict5,star5, indent=0)  
+json.dump(dict5,star5, indent=0)  
+json.dump(dict5,star5, indent=0) 
+json.dump(dict5,star5, indent=0) 
