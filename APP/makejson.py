@@ -72,9 +72,17 @@ while (line_num < 1125459):
         dict2.append(final_text)
     if(rating == 1):
         dict1.append(final_text)
+    
+    if(line_num % 10000 == 0 ):
+         print "{0:.2f}%".format(float(line_num)/1125459 * 100)
 
+print 'starting on 5'
 json.dump(dict5,star5, indent=4) 
-json.dump(dict4,star4, indent=4)  
+print 'finished 5 on 4'
+json.dump(dict4,star4, indent=4) 
+print 'finished 4 on 3' 
 json.dump(dict3,star3, indent=4)  
+print 'finished 3 on 2'
 json.dump(dict2,star2, indent=4) 
+print 'finished 2 on 1'
 json.dump(dict1,star1, indent=4) 
