@@ -1,5 +1,0 @@
-Patrick Vo
-
-•	Take Location Data(from like Facebook or something) predict how many people will be at a given location on a given day
-•	Take Yelp Data figure out what kind of words in review are prone to bad or good review scores. 
-•	
