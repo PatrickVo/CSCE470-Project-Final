@@ -7,3 +7,6 @@ Currently we are only reading the first thousand from each json file, To run our
 2. The only files required are the star json files and the algorithm.py located in the APP folder.
 3. Then run the algorithm.py located inside the APP folder. 
 	
+If time permits, we are planning to add more to the algorithm part later. 
+So far our core algorithm mainly consists of cosine similarity.
+We would like to add the language model method and classification method to the star rating calculation to make the star rating prediction more accurate.
