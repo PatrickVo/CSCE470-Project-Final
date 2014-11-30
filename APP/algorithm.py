@@ -7,6 +7,38 @@ from math import log
 from collections import defaultdict
 import operator
 
+
+class Hw1(object):
+    
+    def __init__(self):
+        pass
+    @staticmethod
+    def read_line(a_json_string_from_document):
+        #sample answer:
+        return json.loads(a_json_string_from_document)
+    @staticmethod
+    def tokenize(string):
+        unicode_word=re.findall(r'\w+',string.lower())
+        return [str(word) for word in unicode_word ]
+    #return a list of words
+    
+    @staticmethod
+    def stopword(a_list_of_words):
+        stopword = []
+        for line in open('stop_word','r'):
+            stopword.append(re.split('\n',line)[0])
+        new_list=[word for word in a_list_of_words if word not in stopword]
+        return new_list
+    #or alternatively use new_list=filter(lambda x: x not in stopword, a_list_of_words)
+    #return a list of words
+    @staticmethod
+    def stemming(a_list_of_words):
+        stems=[stem(word) for word in a_list_of_words]
+        return stems
+#return a list of words
+
+
+
 list5 = []
 list4 = []
 list3 = []
@@ -59,11 +91,11 @@ def cosine(tfidf,tf_query):
                 cosine_similarity[key][key1]=similarity
                 #Getting the top 10 pairs
         rank_dict[key+' '+key1]=similarity
-    top10=sorted(rank_dict.iteritems(), key=itemgetter(1),reverse=1)[0:20] #they shown up in pairs, so keep 20.
+    top10=sorted(rank_dict.iteritems(), key=itemgetter(1),reverse=1)[0:10] #they shown up in pairs, so keep 20.
     sum_1 = 0
     for x in top10:
       sum_1 = sum_1+x[1]
-    return sum_1/20
+    return sum_1/10
 '''
 def get_rating(input):    
     score1 = similar()
@@ -133,12 +165,25 @@ def tf_calc(list1,my_list):
 
 def main():
     openfiles()
-    my_list = list(["pre charter terribl talk sell worthless rude servic avoid repres unhelp main compani program accept outag robot plagu servic unreli midst goal"])
-    tf1 = tf_calc(list1[0:1000],my_list) 
-    tf2 = tf_calc(list2[0:1000],my_list)
-    tf3 = tf_calc(list3[0:1000],my_list)
-    tf4 = tf_calc(list4[0:1000],my_list)
-    tf5 = tf_calc(list5[0:1000],my_list)
+    user_review = input("Enter your review: ")
+    line1 = Hw1.tokenize(user_review)
+    line2 = []
+    line3 = []
+    #for word in line1:
+    line2 = Hw1.stemming(line1)
+    line3 = Hw1.stopword(line2)
+
+    print "list_new: " , line3
+    my_list1 = " ".join(line3)
+    my_list = []
+    my_list.append(my_list1)
+
+    #my_list = list(["pre charter terribl talk sell worthless rude servic avoid repres unhelp main compani program accept outag robot plagu servic unreli midst goal"])
+    tf1 = tf_calc(list1[0:2000],my_list) 
+    tf2 = tf_calc(list2[0:2000],my_list)
+    tf3 = tf_calc(list3[0:2000],my_list)
+    tf4 = tf_calc(list4[0:2000],my_list)
+    tf5 = tf_calc(list5[0:2000],my_list)
     tf_query=defaultdict(dict)
     idf_query={}# idf dictionary of terms
     rid_mapper_query={}# map id number to the line number
