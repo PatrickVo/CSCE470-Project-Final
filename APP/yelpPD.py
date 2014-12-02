@@ -175,7 +175,7 @@ def tf_calc(list1,my_list):
     return tf
 
 def similarity_score(user_review):
-    openfiles()
+    
     #user_review = input("Enter your review: ")
     line1 = Hw1.tokenize(user_review)
     line2 = []
@@ -357,7 +357,8 @@ def main():
     master  = Tk()
     master.title("YelpPD")
     master.geometry("700x700")  
-    loadbusiness()  
+    loadbusiness() 
+    openfiles() 
     display1(master)    
     mainloop()
     
