@@ -16,6 +16,7 @@ import re
 business_list = []
 master = ''
 submitted_text = ''
+star_score = 0
 
 
 
@@ -48,13 +49,12 @@ class Hw1(object):
         return stems
 #return a list of words
 
-
-
 list5 = []
 list4 = []
 list3 = []
 list2 = []
 list1 = []
+
 
 def openfiles():
 	star5 = open('star5.json', 'r')
@@ -227,11 +227,11 @@ def similarity_score(user_review):
             tf_query[key][word]=tf_query[key][word]/sum_tfidf
     dictionary = {}
 
-    dictionary['1 star'] = cosine(tf1,tf_query)
-    dictionary['2 stars'] = cosine(tf2,tf_query)
-    dictionary['3 stars'] = cosine(tf3,tf_query)
-    dictionary['4 stars'] = cosine(tf4,tf_query)
-    dictionary['5 stars'] = cosine(tf5,tf_query)
+    dictionary[1] = cosine(tf1,tf_query)
+    dictionary[2] = cosine(tf2,tf_query)
+    dictionary[3] = cosine(tf3,tf_query)
+    dictionary[4] = cosine(tf4,tf_query)
+    dictionary[5] = cosine(tf5,tf_query)
     final_dict = sorted(dictionary.items(), key = operator.itemgetter(1), reverse = True)
     print "Final Review: " ,final_dict[0][0]
     return final_dict[0][0]
@@ -288,10 +288,11 @@ class display2(Frame):
         self.pack()
     
     def tostars(self,text): 
-        global submitted_text
+        global submitted_text,star_score
         submitted_text = text
-
         star = similarity_score(text)
+        
+        star_score = star 
         self.pack_forget()          
         display3(master)
 
@@ -307,7 +308,21 @@ class display3(Frame):
     def initUI(self):
         w = Label(self, text="The Predicted Star Value")
         w.pack() 
-        image = Image.open("stars_3.png")
+        global star_score
+        image = Image.open("stars_0.png")
+        star = star_score
+        if (star == 1):
+            image = Image.open("stars_1.png")
+        if (star == 2):
+            image = Image.open("stars_2.png")
+        if (star == 3):
+            image = Image.open("stars_3.png")
+        if (star == 4):
+            image = Image.open("stars_4.png")
+        if (star == 5):
+            image = Image.open("stars_5.png")
+        
+       
         photo = ImageTk.PhotoImage(image) 
         label = Label(self,image=photo)
         label.image = photo 
