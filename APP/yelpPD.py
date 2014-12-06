@@ -74,16 +74,7 @@ def openfiles():
 		list1.append(line)
 	
 	
-def similar():
-    filename = open('star1.json','r')
-    for x in filename:
-      print x
 
-def lang_model(input):
-    return 4.0
-
-def classification(input):
-    return 5.0
 
 def cosine(tfidf,tf_query):
     cosine_similarity=defaultdict(dict)
@@ -107,14 +98,7 @@ def cosine(tfidf,tf_query):
     for x in top10:
       sum_1 = sum_1+x[1]
     return sum_1/10
-'''
-def get_rating(input):    
-    score1 = similar()
-    score2 = lang_model(input)
-    score3 = classification(input)   
-    rating = (score1+score2+score3)/3    
-    return round(rating,0)
-'''		
+		
 def tf_calc(list1,my_list):
     tf=defaultdict(dict)
     idf={}# idf dictionary of terms
@@ -235,18 +219,26 @@ def similarity_score(user_review):
     final_dict = sorted(dictionary.items(), key = operator.itemgetter(1), reverse = True)
     print "Final Review: " ,final_dict[0][0]
     return final_dict[0][0]
+    
+def get_rating(input):
+    score1 = similarity_score(input)
+    score2 = score1
+    score3 = score1  
+    rating = (score1+score2+score3)/3.0 
+    return round(rating,0)
 
 class display1(Frame): 
     
-    def __init__(self, parent):
-        Frame.__init__(self, parent)   
+    def __init__(self,parent):
+        Frame.__init__(self,parent)   
          
         self.parent = parent
         
         self.initUI()
         
     def initUI(self):
-
+        
+        
         w = Label(self, text="This is YelpPD")
         w.pack()  
         listbox = Listbox(self, height=10)
@@ -261,7 +253,7 @@ class display1(Frame):
         scrollbar.config(command=listbox.yview)    
         reviewbutton = Button(self, text="Write a Review",command=self.toreview) 
         reviewbutton.pack(side=BOTTOM, fill=X)   
-        self.pack()
+        self.pack(fill=BOTH, expand=1)
         
     def toreview(self):         
         self.pack_forget()           
@@ -285,12 +277,12 @@ class display2(Frame):
         e.pack(side=TOP, fill=BOTH)
         b = Button(self, text="Submit Review",command=lambda: self.tostars(e.get()))
         b.pack(side=BOTTOM, fill=BOTH)
-        self.pack()
+        self.pack(fill=BOTH, expand=1)
     
     def tostars(self,text): 
         global submitted_text,star_score
         submitted_text = text
-        star = similarity_score(text)
+        star = get_rating(text)
         
         star_score = star 
         self.pack_forget()          
@@ -335,7 +327,7 @@ class display3(Frame):
         b2 = Button(self, text="Change Restaurant", command=self.tolist)
         b1.pack()             
         b2.pack()
-        self.pack()
+        self.pack(fill=BOTH, expand=1)
         
     def toreview(self): 
         self.pack_forget()   
@@ -354,6 +346,7 @@ def loadbusiness():
         
         
 def main():
+    global master
     master  = Tk()
     master.title("YelpPD")
     master.geometry("700x700")  
