@@ -13,9 +13,10 @@ from ttk import Frame, Button, Style
 import json #or cjson
 import re
 
-business_list = []
+business_list =  []
 master = ''
 submitted_text = ''
+business_index = 0
 star_score = 0
 
 
@@ -237,25 +238,29 @@ class display1(Frame):
         self.initUI()
         
     def initUI(self):
-        
-        
+
         w = Label(self, text="This is YelpPD")
         w.pack()  
-        listbox = Listbox(self, height=10)
+        listbox = Listbox(self, height=40, width = 110)
+        last_word = '' 
         for i in business_list:
-            listbox.insert(END, i['name'])
+            if last_word != i['name']:
+                listbox.insert(END, i['name'])
+                last_word = i['name']
         scrollbar = Scrollbar(self,orient=VERTICAL)
         scrollbar.configure(command=listbox.yview)
         listbox.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side=LEFT, fill=Y) 
-        listbox.pack(side=LEFT, fill=Y)    
+        listbox.pack()    
         
         scrollbar.config(command=listbox.yview)    
-        reviewbutton = Button(self, text="Write a Review",command=self.toreview) 
+        reviewbutton = Button(self, text="Write a Review",command=lambda: self.toreview(listbox.curselection()[0])) 
         reviewbutton.pack(side=BOTTOM, fill=X)   
         self.pack(fill=BOTH, expand=1)
         
-    def toreview(self):         
+    def toreview(self,text):  
+        global  business_index
+        business_index = text 
         self.pack_forget()           
         display2(master)
         
@@ -270,7 +275,10 @@ class display2(Frame):
         
     def initUI(self):
         w = Label(self, text="Write a Review")        
-        w.pack()          
+        w.pack() 
+        print business_list[int(business_index)]
+        information = Label(self,text = business_list[int(business_index)]['stars'] )
+        information.pack()     
         review_text = StringVar()     
         e = Entry(self, textvariable=review_text)
         review_text.set("Insert Review Here")    
@@ -338,10 +346,14 @@ class display3(Frame):
         display1(master)  
 
 def loadbusiness():
+    global business_list
+
     infilename='yelp_academic_dataset_business.json'
     f=open(infilename,'r')
     for line in f:
-        business_list.append(json.loads(line))
+        load = json.loads(line)
+        business_list.append(load)
+    business_list = sorted(business_list,key=lambda x:x['name'])
    
         
         
