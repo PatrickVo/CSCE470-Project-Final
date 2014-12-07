@@ -18,7 +18,18 @@ master = ''
 submitted_text = ''
 business_index = 0
 star_score = 0
+read_size = 2000
 
+def tokenize(string):
+    unicode_word=re.findall(r'\w*[a-zA-Z0-9]',string.lower())
+    return [str(word) for word in unicode_word ]
+
+def stopword(a_list_of_words):
+    stopword = []
+    for line in open('stop_word','r'):
+        stopword.append(re.split('\n',line)[0])
+    new_list=[word for word in a_list_of_words if word not in stopword]
+    return new_list
 
 
 class Hw1(object):
@@ -56,6 +67,12 @@ list3 = []
 list2 = []
 list1 = []
 
+tlist5 = []
+tlist4 = []
+tlist3 = []
+tlist2 = []
+tlist1 = []
+
 
 def openfiles():
 	star5 = open('star5.json', 'r')
@@ -73,6 +90,161 @@ def openfiles():
 		list2.append(line)
 	for line in star1:
 		list1.append(line)
+		
+def openfilesLM():
+    star5 = open('star5.json', 'r')
+    star4 = open('star4.json', 'r')
+    star3 = open('star3.json', 'r')
+    star2 = open('star2.json', 'r')
+    star1 = open('star1.json', 'r')
+    cnt = 0
+    for line in star5:
+        if cnt < 5000:
+   	    tlist5.append(tokenize(line))
+        cnt += 1
+        
+    cnt = 0
+    for line in star4:
+        if cnt < 5000:
+   	    tlist4.append(tokenize(line))
+        cnt += 1
+        
+    cnt = 0
+    for line in star3:
+        if cnt < 5000:
+   	    tlist3.append(tokenize(line))
+        cnt += 1
+        
+    cnt = 0
+    for line in star2:
+        if cnt < 5000:
+   	    tlist2.append(tokenize(line))
+        cnt += 1
+        
+    cnt = 0
+    for line in star1:
+        if cnt < 5000:
+   	    tlist1.append(tokenize(line))
+        cnt += 1
+        
+
+def wordcount(list):
+    count = 0
+    for line in list:
+        for i in line:
+            count += 1
+    return count
+
+def lm(query):
+    star1_score = 0
+    star2_score = 0
+    star3_score = 0
+    star4_score = 0
+    star5_score = 0
+    query_list = stopword(tokenize(query))
+
+    wordcount1 = wordcount(list1)
+    wordcount2 = wordcount(list2)
+    wordcount3 = wordcount(list3)
+    wordcount4 = wordcount(list4)
+    wordcount5 = wordcount(list5)
+    
+
+    for d in tlist5: #calculate score for star5 list
+        for q in query_list:
+            tf = 0
+            token_in_doc_count = 0
+            for i in d:
+                token_in_doc_count += 1
+                if (q == i):
+                    tf += 1
+            if token_in_doc_count == 0:
+                token_in_doc_count = 1
+            a = ( float(tf) / float(token_in_doc_count) )
+            b = (float(tf) / float(wordcount5))
+            star5_score += (0.7 * a + 0.3 * b)
+    star5_score = log(star5_score)
+
+    for d in tlist4: #calculate score for star4 list
+        for q in query_list:
+            tf = 0
+            token_in_doc_count = 0
+            for i in d:
+                token_in_doc_count += 1
+                if (q == i):
+                    tf += 1
+            if token_in_doc_count == 0:
+                token_in_doc_count = 1
+            a = ( float(tf) / float(token_in_doc_count) )
+            b = (float(tf) / float(wordcount4))
+            star4_score += (0.7 * a + 0.3 * b)
+    star4_score = log(star4_score)
+
+    for d in tlist3: #calculate score for star3 list
+        for q in query_list:
+            tf = 0
+            token_in_doc_count = 0
+            for i in d:
+                token_in_doc_count += 1
+                if (q == i):
+                    tf += 1
+            if token_in_doc_count == 0:
+                token_in_doc_count = 1
+            a = ( float(tf) / float(token_in_doc_count) )
+            b = (float(tf) / float(wordcount3))
+            star3_score += (0.7 * a + 0.3 * b)
+    star3_score = log(star3_score)
+
+    for d in tlist2: #calculate score for star2 list
+        for q in query_list:
+            tf = 0
+            token_in_doc_count = 0
+            for i in d:
+                token_in_doc_count += 1
+                if (q == i):
+                    tf += 1
+            if token_in_doc_count == 0:
+                token_in_doc_count = 1
+            a = ( float(tf) / float(token_in_doc_count) )
+            b = (float(tf) / float(wordcount2))
+            star2_score += (0.7 * a + 0.3 * b)
+    star2_score = log(star2_score)
+
+    for d in tlist1: #calculate score for star1 list
+        for q in query_list:
+            tf = 0
+            token_in_doc_count = 0
+            for i in d:
+                token_in_doc_count += 1
+                if (q == i):
+                    tf += 1
+            if token_in_doc_count == 0:
+                token_in_doc_count = 1
+            a = ( float(tf) / float(token_in_doc_count) )
+            b = (float(tf) / float(wordcount1))
+            star1_score += (0.7 * a + 0.3 * b)
+    star1_score = log(star1_score)
+
+    top_score = star1_score
+    if star2_score > top_score:
+        top_score = star2_score
+    if star3_score > top_score:
+        top_score = star3_score
+    if star4_score > top_score:
+        top_score = star4_score
+    if star5_score > top_score:
+        top_score = star5_score
+
+    if top_score == star1_score:
+        return 1
+    if top_score == star2_score:
+        return 2
+    if top_score == star3_score:
+        return 3
+    if top_score == star4_score:
+        return 4
+    if top_score == star5_score:
+        return 5
 	
 	
 
@@ -169,17 +341,17 @@ def similarity_score(user_review):
     line2 = Hw1.stemming(line1)
     line3 = Hw1.stopword(line2)
 
-    print "list_new: " , line3
+  
     my_list1 = " ".join(line3)
     my_list = []
     my_list.append(my_list1)
 
     #my_list = list(["pre charter terribl talk sell worthless rude servic avoid repres unhelp main compani program accept outag robot plagu servic unreli midst goal"])
-    tf1 = tf_calc(list1[0:2000],my_list) 
-    tf2 = tf_calc(list2[0:2000],my_list)
-    tf3 = tf_calc(list3[0:2000],my_list)
-    tf4 = tf_calc(list4[0:2000],my_list)
-    tf5 = tf_calc(list5[0:2000],my_list)
+    tf1 = tf_calc(list1[0:read_size],my_list) 
+    tf2 = tf_calc(list2[0:read_size],my_list)
+    tf3 = tf_calc(list3[0:read_size],my_list)
+    tf4 = tf_calc(list4[0:read_size],my_list)
+    tf5 = tf_calc(list5[0:read_size],my_list)
     tf_query=defaultdict(dict)
     idf_query={}# idf dictionary of terms
     rid_mapper_query={}# map id number to the line number
@@ -218,14 +390,15 @@ def similarity_score(user_review):
     dictionary[4] = cosine(tf4,tf_query)
     dictionary[5] = cosine(tf5,tf_query)
     final_dict = sorted(dictionary.items(), key = operator.itemgetter(1), reverse = True)
-    print "Final Review: " ,final_dict[0][0]
     return final_dict[0][0]
     
 def get_rating(input):
     score1 = similarity_score(input)
-    score2 = score1
+    score2 = lm(input)
     score3 = score1  
     rating = (score1+score2+score3)/3.0 
+    print score1
+    print score2
     return round(rating,0)
 
 class display1(Frame): 
@@ -276,7 +449,7 @@ class display2(Frame):
     def initUI(self):
         w = Label(self, text="Write a Review")        
         w.pack() 
-        print business_list[int(business_index)]
+
         information = Label(self,text = business_list[int(business_index)]['stars'] )
         information.pack()     
         review_text = StringVar()     
@@ -291,9 +464,10 @@ class display2(Frame):
         global submitted_text,star_score
         submitted_text = text
         star = get_rating(text)
+        self.pack_forget()
         
         star_score = star 
-        self.pack_forget()          
+                
         display3(master)
 
 class display3(Frame):
@@ -363,7 +537,8 @@ def main():
     master.title("YelpPD")
     master.geometry("700x700")  
     loadbusiness() 
-    openfiles() 
+    openfiles()
+    openfilesLM() 
     display1(master)    
     mainloop()
     
