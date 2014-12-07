@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import with_statement
 import json #or cjson
 import re
 from stemming.porter2 import stem
@@ -12,6 +13,12 @@ from Tkinter import Tk, RIGHT, BOTH, RAISED
 from ttk import Frame, Button, Style
 import json #or cjson
 import re
+
+
+import math
+import sys
+
+import category_predictor
 
 business_list =  []
 master = ''
@@ -126,6 +133,74 @@ def openfilesLM():
         if cnt < read_size:
    	    tlist1.append(tokenize(line))
         cnt += 1
+        
+
+
+class ReviewCategoryClassifier(object):
+
+	@classmethod
+	def load_data(cls, input_file):
+
+		job = category_predictor.CategoryPredictor()
+
+		category_counts = None
+		word_counts = {}
+
+		with open(input_file) as src:
+			for line in src:
+				category, counts = job.parse_output_line(line)
+
+				if category == 'all':
+					category_counts = counts
+				else:
+					word_counts[category] = counts
+
+		return category_counts, word_counts
+
+	@classmethod
+	def normalize_counts(cls, counts):
+
+		total = sum(counts.itervalues())
+		lg_total = math.log(total)
+
+		return dict((key, math.log(cnt) - lg_total) for key, cnt in counts.iteritems())
+
+	def __init__(self, input_file):
+
+		category_counts, word_counts = self.load_data(input_file)
+
+		self.word_given_cat_prob = {}
+		for cat, counts in word_counts.iteritems():
+			self.word_given_cat_prob[cat] = self.normalize_counts(counts)
+
+		# filter out categories which have no words
+		seen_categories = set(word_counts)
+		seen_category_counts = dict((cat, count) for cat, count in category_counts.iteritems() \
+										if cat in seen_categories)
+		self.category_prob = self.normalize_counts(seen_category_counts)
+
+	def classify(self, text):
+
+		lg_scores = self.category_prob.copy()
+
+		for word in category_predictor.words(text):
+			for cat in lg_scores:
+				cat_probs = self.word_given_cat_prob[cat]
+
+				if word in cat_probs:
+					lg_scores[cat] += cat_probs[word]
+				else:
+					lg_scores[cat] += cat_probs['UNK']
+
+
+		scores = dict((cat, math.exp(score)) for cat, score in lg_scores.iteritems())
+		total = sum(scores.itervalues())
+		return dict((cat, prob / total) for cat, prob in scores.iteritems())
+        
+def predictor(query):
+    guesses = ReviewCategoryClassifier("review_new.json").classify(query)
+    best_guesses = sorted(guesses.iteritems(), key=lambda (_, prob): prob, reverse=True)[:5]
+    return best_guesses[0]
         
 
 def wordcount(list):
@@ -392,14 +467,14 @@ def similarity_score(user_review):
     final_dict = sorted(dictionary.items(), key = operator.itemgetter(1), reverse = True)
     return final_dict[0][0]
     
-def get_rating(input):
-    #score1 = similarity_score(input)
-    score2 = lm(input)
-    score1 = score2
-    score3 = score1
+def get_rating(text):
+    score1 = similarity_score(text)
+    score2 = lm(text)    
+    score3 = predictor(text)
     rating = (score1+score2+score3)/3.0 
     print score1
     print score2
+    print score3
     return round(rating,0)
 
 class display1(Frame): 
