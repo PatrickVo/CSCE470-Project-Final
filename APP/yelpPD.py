@@ -469,12 +469,13 @@ def similarity_score(user_review):
     
 def get_rating(text):
     score1 = similarity_score(text)
-    score2 = lm(text)    
-    score3 = predictor(text)
+    #score2 = lm(text)    
+    score2 = score1
+    score3 = score2
     rating = (score1+score2+score3)/3.0 
     print score1
     print score2
-    print score3
+    print "score3: " , predictor(text)[0]
     return round(rating,0)
 
 class display1(Frame): 
@@ -559,18 +560,18 @@ class display3(Frame):
         w = Label(self, text="The Predicted Star Value")
         w.pack() 
         global star_score
-        image = Image.open("stars_0.png")
+        image = Image.open("stars_0.jpg")
         star = star_score
         if (star == 1):
-            image = Image.open("stars_1.png")
+            image = Image.open("stars_1.jpg")
         if (star == 2):
-            image = Image.open("stars_2.png")
+            image = Image.open("stars_2.jpg")
         if (star == 3):
-            image = Image.open("stars_3.png")
+            image = Image.open("stars_3.jpg")
         if (star == 4):
-            image = Image.open("stars_4.png")
+            image = Image.open("stars_4.jpg")
         if (star == 5):
-            image = Image.open("stars_5.png")
+            image = Image.open("stars_5.jpg")
         
        
         photo = ImageTk.PhotoImage(image) 
