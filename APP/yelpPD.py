@@ -18,7 +18,7 @@ master = ''
 submitted_text = ''
 business_index = 0
 star_score = 0
-read_size = 2000
+read_size = 1500
 
 def tokenize(string):
     unicode_word=re.findall(r'\w*[a-zA-Z0-9]',string.lower())
@@ -99,31 +99,31 @@ def openfilesLM():
     star1 = open('star1.json', 'r')
     cnt = 0
     for line in star5:
-        if cnt < 5000:
+        if cnt < read_size:
    	    tlist5.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star4:
-        if cnt < 5000:
+        if cnt < read_size:
    	    tlist4.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star3:
-        if cnt < 5000:
+        if cnt < read_size:
    	    tlist3.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star2:
-        if cnt < 5000:
+        if cnt < read_size:
    	    tlist2.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star1:
-        if cnt < 5000:
+        if cnt < read_size:
    	    tlist1.append(tokenize(line))
         cnt += 1
         
@@ -393,9 +393,10 @@ def similarity_score(user_review):
     return final_dict[0][0]
     
 def get_rating(input):
-    score1 = similarity_score(input)
+    #score1 = similarity_score(input)
     score2 = lm(input)
-    score3 = score1  
+    score1 = score2
+    score3 = score1
     rating = (score1+score2+score3)/3.0 
     print score1
     print score2
@@ -414,7 +415,7 @@ class display1(Frame):
 
         w = Label(self, text="This is YelpPD")
         w.pack()  
-        listbox = Listbox(self, height=40, width = 110)
+        listbox = Listbox(self, height=20, width = 110)
         last_word = '' 
         for i in business_list:
             if last_word != i['name']:
@@ -535,7 +536,7 @@ def main():
     global master
     master  = Tk()
     master.title("YelpPD")
-    master.geometry("700x700")  
+    master.geometry("900x900")  
     loadbusiness() 
     openfiles()
     openfilesLM() 
