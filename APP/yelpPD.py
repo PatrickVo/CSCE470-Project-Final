@@ -25,7 +25,7 @@ master = ''
 submitted_text = ''
 business_index = 0
 star_score = 0
-read_size1 = 1500
+read_size1 = 5000
 read_size2 = 500
 
 def tokenize(string):
@@ -470,7 +470,8 @@ def similarity_score(user_review):
     
 def get_rating(text):
     score1 = similarity_score(text)
-    score2 = lm(text)
+    #score2 = lm(text)
+    score2 = score1
     score3 = predictor(text)
     
     if(score1 == score2):
