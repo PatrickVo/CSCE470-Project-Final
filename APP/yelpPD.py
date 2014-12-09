@@ -25,7 +25,8 @@ master = ''
 submitted_text = ''
 business_index = 0
 star_score = 0
-read_size = 1500
+read_size1 = 1500
+read_size2 = 500
 
 def tokenize(string):
     unicode_word=re.findall(r'\w*[a-zA-Z0-9]',string.lower())
@@ -106,31 +107,31 @@ def openfilesLM():
     star1 = open('star1.json', 'r')
     cnt = 0
     for line in star5:
-        if cnt < read_size:
+        if cnt < read_size2:
    	    tlist5.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star4:
-        if cnt < read_size:
+        if cnt < read_size2:
    	    tlist4.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star3:
-        if cnt < read_size:
+        if cnt < read_size2:
    	    tlist3.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star2:
-        if cnt < read_size:
+        if cnt < read_size2:
    	    tlist2.append(tokenize(line))
         cnt += 1
         
     cnt = 0
     for line in star1:
-        if cnt < read_size:
+        if cnt < read_size2:
    	    tlist1.append(tokenize(line))
         cnt += 1
         
@@ -200,7 +201,7 @@ class ReviewCategoryClassifier(object):
 def predictor(query):
     guesses = ReviewCategoryClassifier("review_new.json").classify(query)
     best_guesses = sorted(guesses.iteritems(), key=lambda (_, prob): prob, reverse=True)[:5]
-    return best_guesses[0]
+    return int(best_guesses[0][0])
         
 
 def wordcount(list):
@@ -422,11 +423,11 @@ def similarity_score(user_review):
     my_list.append(my_list1)
 
     #my_list = list(["pre charter terribl talk sell worthless rude servic avoid repres unhelp main compani program accept outag robot plagu servic unreli midst goal"])
-    tf1 = tf_calc(list1[0:read_size],my_list) 
-    tf2 = tf_calc(list2[0:read_size],my_list)
-    tf3 = tf_calc(list3[0:read_size],my_list)
-    tf4 = tf_calc(list4[0:read_size],my_list)
-    tf5 = tf_calc(list5[0:read_size],my_list)
+    tf1 = tf_calc(list1[0:read_size1],my_list) 
+    tf2 = tf_calc(list2[0:read_size1],my_list)
+    tf3 = tf_calc(list3[0:read_size1],my_list)
+    tf4 = tf_calc(list4[0:read_size1],my_list)
+    tf5 = tf_calc(list5[0:read_size1],my_list)
     tf_query=defaultdict(dict)
     idf_query={}# idf dictionary of terms
     rid_mapper_query={}# map id number to the line number
@@ -469,13 +470,21 @@ def similarity_score(user_review):
     
 def get_rating(text):
     score1 = similarity_score(text)
-    #score2 = lm(text)    
-    score2 = score1
-    score3 = score2
+    score2 = lm(text)
+    score3 = predictor(text)
+    
+    if(score1 == score2):
+        score3 == score1
+    if(score2 == score3):
+        score1 == score2
+    if(score3 == score1):
+        score2 == score3
+    
+    
     rating = (score1+score2+score3)/3.0 
     print score1
     print score2
-    print "score3: " , predictor(text)[0]
+    print score3
     return round(rating,0)
 
 class display1(Frame): 
@@ -524,11 +533,26 @@ class display2(Frame):
         self.initUI()
         
     def initUI(self):
-        w = Label(self, text="Write a Review")        
-        w.pack() 
+        
 
-        information = Label(self,text = business_list[int(business_index)]['stars'] )
-        information.pack()     
+        information = Label(self,text = " \n Information on "+business_list[int(business_index)]['name']+"\n \n Located at: \n " + business_list[int(business_index)]['full_address'] )
+        information.pack() 
+        num_reviews  = Label(self, text = "Number of Reviews : " + str(business_list[int(business_index)]['review_count']) )    
+        num_reviews.pack()
+        
+        type = Label(self, text = "Type of Restaurant : " + str(business_list[int(business_index)]['type']) )    
+        type.pack()
+        
+        cat = business_list[int(business_index)]['categories']
+        text_cat = ''
+        for item in cat:
+            text_cat = text_cat + ", " + item
+        
+        categories = Label(self, text = "Category of the resaurtant "+ text_cat )
+        categories.pack()
+        
+        w = Label(self, text=" \n Write a Review for "+business_list[int(business_index)]['name'] )        
+        w.pack() 
         review_text = StringVar()     
         e = Entry(self, textvariable=review_text)
         review_text.set("Insert Review Here")    
