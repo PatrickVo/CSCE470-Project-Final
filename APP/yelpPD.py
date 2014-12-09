@@ -501,7 +501,7 @@ class display1(Frame):
 
         w = Label(self, text="This is YelpPD")
         w.pack()  
-        listbox = Listbox(self, height=20, width = 110)
+        listbox = Listbox(self, height=40, width = 150)
         last_word = '' 
         for i in business_list:
             if last_word != i['name']:
@@ -554,11 +554,11 @@ class display2(Frame):
         
         w = Label(self, text=" \n Write a Review for "+business_list[int(business_index)]['name'] )        
         w.pack() 
-        review_text = StringVar()     
-        e = Entry(self, textvariable=review_text)
-        review_text.set("Insert Review Here")    
-        e.pack(side=TOP, fill=BOTH)
-        b = Button(self, text="Submit Review",command=lambda: self.tostars(e.get()))
+  
+        e = Text(self, height=20, width=100)
+        e.insert(END,"Insert Review Here")    
+        e.pack()
+        b = Button(self, text="Submit Review",command=lambda: self.tostars(e.get(1.0, END)))
         b.pack(side=BOTTOM, fill=BOTH)
         self.pack(fill=BOTH, expand=1)
     
@@ -603,7 +603,7 @@ class display3(Frame):
         label = Label(self,image=photo)
         label.image = photo 
         label.pack()          
-        T = Text(self, height=5, width=80)
+        T = Text(self, height=20, width=100)
         T.pack()
         Textbox = submitted_text
         T.insert(END, Textbox)         
